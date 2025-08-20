@@ -2,12 +2,12 @@ package com.kazemieh.divar.core.location.entity
 
 import jakarta.persistence.*
 
-@Entity(name = "City")
+@Entity(name = "city")
 data class City(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
-    val name: String? = null,
+    val id: Long,
+    val name: String,
     @ManyToOne
     @JoinColumn(name = "province_id")
-    val province: Province? = null,
+    val province: Province,
 )
