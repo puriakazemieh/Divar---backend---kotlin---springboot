@@ -5,9 +5,9 @@ import jakarta.persistence.*
 @Entity(name = "neighborhood")
 data class Neighborhood(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long = 0,
     val name: String,
     @ManyToOne
     @JoinColumn(name = "City_id")
-    val province: City,
+    val city: City,
 )

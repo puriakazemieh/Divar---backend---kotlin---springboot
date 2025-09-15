@@ -24,7 +24,7 @@ class ProvinceController(
         return if (name.isNullOrEmpty()) {
             "وارد نشده است نام "
         } else {
-            service.saveProvince(Province(name = name))
+            service.save(Province(name = name))
             " با موفقیت ساخته شد دیتا"
         }
     }

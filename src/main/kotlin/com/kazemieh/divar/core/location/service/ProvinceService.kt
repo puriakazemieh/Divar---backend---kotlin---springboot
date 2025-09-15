@@ -13,8 +13,16 @@ class ProvinceService(
         return repository.findAll()
     }
 
-    fun saveProvince(province: Province) {
-         repository.save(province)
+    fun save(entity: Province): Province {
+        return repository.save(entity)
+    }
+
+    fun saveAll(entity: List<Province>): MutableList<Province> {
+        return repository.saveAll(entity)
+    }
+
+    fun countProvince(): Long {
+        return repository.count()
     }
 
 }
