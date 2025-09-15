@@ -13,4 +13,8 @@ class ProvinceService(
         return repository.findAll()
     }
 
+    fun saveProvince(province: Province) {
+         repository.save(province)
+    }
+
 }
