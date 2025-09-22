@@ -8,9 +8,9 @@ data class CityResponse(
     val neighborhood: List<NeighborhoodResponse>? = null,
 )
 
-fun City.toResponse(isFillNeighborhood: Boolean = true): CityResponse {
+fun City.toResponse(includeNeighborhood: Boolean = true): CityResponse {
     return CityResponse(
         id = id,
         name = name,
-        neighborhood = if (isFillNeighborhood) neighborhood.map { it.toResponse() } else null)
+        neighborhood = if (includeNeighborhood) neighborhood.map { it.toResponse() } else null)
 }

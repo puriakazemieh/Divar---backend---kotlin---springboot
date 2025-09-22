@@ -21,7 +21,7 @@ class CityService(
         return repository.saveAll(entity)
     }
 
-    fun countProvince(): Long {
+    fun count(): Long {
         return repository.count()
     }
 
