@@ -1,5 +1,7 @@
 package com.kazemieh.divar.core.location.controller
 
+import com.kazemieh.divar.core.location.dto.ProvinceResponse
+import com.kazemieh.divar.core.location.dto.toResponse
 import com.kazemieh.divar.core.location.entity.Province
 import com.kazemieh.divar.core.location.service.ProvinceService
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,8 +15,8 @@ class ProvinceController(
 ) {
 
     @GetMapping("api/v1/province")
-    fun getProvince(): List<Province> {
-        return service.findAll()
+    fun getProvince(): List<ProvinceResponse> {
+        return service.findAll().map { it.toResponse(false) }
     }
 
     @PostMapping("api/v1/province")

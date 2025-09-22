@@ -10,4 +10,7 @@ data class City(
     @ManyToOne
     @JoinColumn(name = "province_id")
     val province: Province,
+
+    @OneToMany(mappedBy = "city")
+    val neighborhood: List<Neighborhood> = listOf(),
 )
