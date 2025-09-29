@@ -4,13 +4,11 @@ import com.kazemieh.divar.core.user.dto.UserRequest
 import com.kazemieh.divar.core.user.dto.toEntity
 import com.kazemieh.divar.core.user.dto.toResponse
 import com.kazemieh.divar.core.user.service.UserService
+import com.kazemieh.divar.utils.response.ApiResponse
+import com.kazemieh.divar.utils.response.BadRequestError
+import com.kazemieh.divar.utils.response.UnauthorizedError
 import com.kazemieh.divar.utils.security.JwtService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("api/v1/")
@@ -20,29 +18,52 @@ class UserController(
 ) {
 
     @PostMapping("user")
-    fun addUser(
+    fun register(
         @RequestBody userRequest: UserRequest? = null
     ): Any {
-        return if (userRequest == null) return "لطفا اطلاعات کاربر را وارد نمایید"
+        return if (userRequest == null) ApiResponse.error<BadRequestError>(BadRequestError())
+        else if (service.findByEmail(userRequest.email) != null)
+            ApiResponse.error<BadRequestError>(BadRequestError(message = "کاربر با این ایمیل وجود داره"))
         else {
             val user = userRequest.toEntity()
             val token = jwtService.generate(user)
             val savedUser = service.save(user)
-            savedUser.toResponse(token)
+            val userResponse = savedUser.toResponse(token)
+            return ApiResponse.success(userResponse)
         }
+    }
+
+    @PutMapping("user")
+    fun updateUser(
+        @RequestBody userRequest: UserRequest? = null
+    ): Any {
+        if (userRequest == null) return ApiResponse.error<BadRequestError>(BadRequestError())
+        return service.findByEmail(userRequest.email)?.let { dbUser ->
+            val user = userRequest.toEntity()
+           val updateUser = service.save(user.copy(id = dbUser.id))
+            ApiResponse.success(updateUser.toResponse(""))
+        } ?: run {
+            ApiResponse.error<BadRequestError>(BadRequestError(message = "کاربری با این مشخصات یافت نشد"))
+        }
+
     }
 
     @GetMapping("user")
     fun getUser(
         @RequestHeader("Authorization") token: String?,
     ): Any? {
-        return if (token.isNullOrEmpty()) "لطفا مقادیر مورد نیاز را وارد نمایید"
+        return if (token.isNullOrEmpty()) ApiResponse.error<BadRequestError>(BadRequestError())
         else {
             val mobile = jwtService.extractMobile(token)
-            if (mobile.isNullOrEmpty()) "موبایل معتبر نیست "
+            if (mobile.isNullOrEmpty())
+                ApiResponse.error<UnauthorizedError>(UnauthorizedError())
             else {
-               val user = service.findByMobile(mobile)
-                return user?.toResponse(token)
+                service.findByMobile(mobile)?.let { dbUser ->
+                    val response = dbUser.toResponse(token)
+                    ApiResponse.success(response)
+                } ?: run {
+                    ApiResponse.error<BadRequestError>(BadRequestError(message = "کاربری با این مشخصات یافت نشد"))
+                }
             }
         }
     }
