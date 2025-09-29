@@ -9,7 +9,7 @@ object ApiResponse {
         return ResponseEntity.ok(successResponse)
     }
 
-    fun <T> error(apiError: ApiError): ResponseEntity<*> {
+    fun error(apiError: ApiError): ResponseEntity<*> {
         val failureResponse = FailureResponse(message = apiError.message, errorCode = apiError.httpStatus.value())
         return ResponseEntity.status(apiError.httpStatus).body(failureResponse)
     }

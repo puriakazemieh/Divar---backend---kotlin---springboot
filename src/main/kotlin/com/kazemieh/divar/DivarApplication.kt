@@ -4,8 +4,10 @@ import com.kazemieh.divar.core.category.service.CategoryService
 import com.kazemieh.divar.core.location.service.CityService
 import com.kazemieh.divar.core.location.service.NeighborhoodService
 import com.kazemieh.divar.core.location.service.ProvinceService
+import com.kazemieh.divar.core.parameter.service.ParameterService
 import com.kazemieh.divar.utils.provider.CategoryDataProvider
 import com.kazemieh.divar.utils.provider.LocationDataProvider
+import com.kazemieh.divar.utils.provider.ParameterDataProvider
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
@@ -17,6 +19,7 @@ fun main(args: Array<String>) {
     val context = runApplication<DivarApplication>(*args)
     initLocation(context)
     initCategory(context)
+    initParameters(context)
 }
 
 fun initLocation(context: ConfigurableApplicationContext) {
@@ -41,4 +44,11 @@ fun initCategory(context: ConfigurableApplicationContext) {
     if (service.count() < 1) {
         service.saveAll(CategoryDataProvider.getData())
     }
+}
+
+fun initParameters(context: ConfigurableApplicationContext) {
+    val service = context.getBean(ParameterService::class.java)
+    val categories = context.getBean(CategoryService::class.java).findAll()
+    if (service.count() < 1)
+        service.saveAll(ParameterDataProvider.getParameters(categories))
 }

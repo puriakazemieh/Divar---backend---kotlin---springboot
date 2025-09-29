@@ -3,6 +3,7 @@ package com.kazemieh.divar.core.category.service
 import com.kazemieh.divar.core.category.entity.Category
 import com.kazemieh.divar.core.category.repository.CategoryRepository
 import org.springframework.stereotype.Service
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class CategoryService(
@@ -11,6 +12,10 @@ class CategoryService(
 
     fun findAll(): List<Category> {
         return repository.findAll().filter { it.parent == null }
+    }
+
+    fun findById(id: Long): Category? {
+        return repository.findById(id).getOrNull()
     }
 
     fun save(entity: Category): Category {

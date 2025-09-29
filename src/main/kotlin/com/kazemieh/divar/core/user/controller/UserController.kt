@@ -21,9 +21,9 @@ class UserController(
     fun register(
         @RequestBody userRequest: UserRequest? = null
     ): Any {
-        return if (userRequest == null) ApiResponse.error<BadRequestError>(BadRequestError())
+        return if (userRequest == null) ApiResponse.error(BadRequestError())
         else if (service.findByEmail(userRequest.email) != null)
-            ApiResponse.error<BadRequestError>(BadRequestError(message = "کاربر با این ایمیل وجود داره"))
+            ApiResponse.error(BadRequestError(message = "کاربر با این ایمیل وجود داره"))
         else {
             val user = userRequest.toEntity()
             val token = jwtService.generate(user)
@@ -37,13 +37,13 @@ class UserController(
     fun updateUser(
         @RequestBody userRequest: UserRequest? = null
     ): Any {
-        if (userRequest == null) return ApiResponse.error<BadRequestError>(BadRequestError())
+        if (userRequest == null) return ApiResponse.error(BadRequestError())
         return service.findByEmail(userRequest.email)?.let { dbUser ->
             val user = userRequest.toEntity()
-           val updateUser = service.save(user.copy(id = dbUser.id))
+            val updateUser = service.save(user.copy(id = dbUser.id))
             ApiResponse.success(updateUser.toResponse(""))
         } ?: run {
-            ApiResponse.error<BadRequestError>(BadRequestError(message = "کاربری با این مشخصات یافت نشد"))
+            ApiResponse.error(BadRequestError(message = "کاربری با این مشخصات یافت نشد"))
         }
 
     }
@@ -52,17 +52,17 @@ class UserController(
     fun getUser(
         @RequestHeader("Authorization") token: String?,
     ): Any? {
-        return if (token.isNullOrEmpty()) ApiResponse.error<BadRequestError>(BadRequestError())
+        return if (token.isNullOrEmpty()) ApiResponse.error(BadRequestError())
         else {
             val mobile = jwtService.extractMobile(token)
             if (mobile.isNullOrEmpty())
-                ApiResponse.error<UnauthorizedError>(UnauthorizedError())
+                ApiResponse.error(UnauthorizedError())
             else {
                 service.findByMobile(mobile)?.let { dbUser ->
                     val response = dbUser.toResponse(token)
                     ApiResponse.success(response)
                 } ?: run {
-                    ApiResponse.error<BadRequestError>(BadRequestError(message = "کاربری با این مشخصات یافت نشد"))
+                    ApiResponse.error(BadRequestError(message = "کاربری با این مشخصات یافت نشد"))
                 }
             }
         }
