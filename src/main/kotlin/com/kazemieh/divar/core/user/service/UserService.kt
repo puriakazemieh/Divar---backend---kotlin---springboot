@@ -17,4 +17,12 @@ class UserService(
     fun save(user: User): User {
         return userRepository.save(user.copy(password = hashPassword(user.password)))
     }
+
+    fun findByEmail(email: String): User? {
+        return userRepository.findByEmail(email)
+    }
+
+    fun findByMobile(mobile: String): User? {
+        return userRepository.findByMobile(mobile)
+    }
 }
