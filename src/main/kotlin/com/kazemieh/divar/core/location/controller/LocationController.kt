@@ -1,10 +1,12 @@
 package com.kazemieh.divar.core.location.controller
 
-import com.kazemieh.divar.core.location.dto.ProvinceResponse
 import com.kazemieh.divar.core.location.dto.toResponse
 import com.kazemieh.divar.core.location.service.ProvinceService
+import com.kazemieh.divar.utils.response.ApiResponse
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -14,8 +16,12 @@ class LocationController(
 ) {
 
     @GetMapping("location")
-    fun getLocation(): List<ProvinceResponse> {
-        return service.findAll().map { it.toResponse() }
+    fun getLocation(
+        @RequestParam("includeCities") includeCities: Boolean? = true,
+        @RequestParam("includeNeighborhood") includeNeighborhood: Boolean? = true,
+    ): ResponseEntity<*> {
+        return ApiResponse.success(
+            service.findAll().map { it.toResponse(includeCities ?: true, includeNeighborhood ?: true) })
     }
 
 }
